@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UTAS IBRA ELC - Diagnostic Writing & IELTS Evaluator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              DEFAULT: '#0a192f',
+              surface: '#112240',
+              card: '#1b2d50',
+              dark: '#050c18'
+            },
+            amber: {
+              DEFAULT: '#ffbf00',
+              light: '#ffd24d',
+              glow: 'rgba(255, 191, 0, 0.2)'
+            },
+            gold: '#d4af37'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #0a192f;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    .gold-border {
+      border: 2px solid #d4af37;
+    }
+    .amber-border {
+      border: 2px solid #ffbf00;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #112240;
+      border-radius: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #d4af37;
+      border-radius: 6px;
+    }
+    .error-highlight {
+      color: #f87171 !important;
+      font-weight: 800 !important;
+      text-decoration: underline !important;
+      background-color: rgba(239, 68, 68, 0.15);
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #officialPdfCard, #officialPdfCard * {
+        visibility: visible;
+      }
+      #officialPdfCard {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col items-center">
+
+<div class="w-full max-w-7xl bg-navy-surface gold-border rounded-2xl p-4 md:p-8 shadow-2xl relative mb-8">
+  <header class="flex flex-col md:flex-row justify-between items-center border-b-2 border-gold/40 pb-5 gap-4">
+    <div class="text-center md:text-left">
+      <div class="flex items-center gap-2 justify-center md:justify-start mb-1">
+        <span class="bg-amber text-navy text-xs font-black px-2.5 py-0.5 rounded uppercase tracking-wider">UTAS IBRA - ELC</span>
+        <span class="text-slate-400 text-xs font-bold tracking-wide">English Language Center & Foundation Studies</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-black text-amber uppercase tracking-wider">
+        Diagnostic Writing & IELTS Evaluator
+      </h1>
+      <p class="text-slate-300 text-xs md:text-sm font-semibold mt-1">
+        Formative Cognitive Scaffolding & 40-Point Rubric Diagnostic Engine
+      </p>
+    </div>
+    
+    <div class="flex flex-col items-center md:items-end gap-2">
+      <div class="bg-navy px-4 py-2 rounded-xl border border-amber/60 text-right">
+        <div class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Resource Person & Examiner</div>
+        <div class="text-amber font-extrabold text-sm md:text-base">Muhammad Shahzad</div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="toggleRubricModal()" class="bg-navy-card hover:bg-navy border border-gold/60 text-gold text-xs font-bold py-1.5 px-3 rounded-lg transition">
+          📊 40-Point Rubric
+        </button>
+        <button onclick="toggleTaxonomyModal()" class="bg-navy-card hover:bg-navy border border-gold/60 text-amber text-xs font-bold py-1.5 px-3 rounded-lg transition">
+          📖 Taxonomy Guide
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mt-6">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2 text-amber font-black text-sm md:text-base uppercase tracking-wider">
+        <span class="w-6 h-6 rounded-full bg-amber text-navy flex items-center justify-center text-xs font-black">1</span>
+        Select Assessment Genre & Target Length
+      </div>
+      <button onclick="loadSamplePrompt()" class="text-xs text-amber hover:text-gold font-bold underline">
+        Load Sample IELTS Task 1 Prompt
+      </button>
+    </div>
+
+    <!-- Genre Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      <button type="button" onclick="selectGenre('IELTS_Task_1', 150)" id="genre-IELTS_Task_1" class="genre-btn bg-navy-card border-2 border-amber p-4 rounded-xl text-left transition transform hover:-translate-y-0.5">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-amber font-black text-sm uppercase">IELTS Task 1</span>
+          <span class="bg-navy text-amber text-[11px] px-2 py-0.5 rounded-full border border-amber/40 font-bold">Min 150 w</span>
+        </div>
+        <div class="text-xs text-slate-300 font-medium">Graphs, charts, maps, process diagrams & data trends.</div>
+      </button>
+
+      <button type="button" onclick="selectGenre('IELTS_Task_2', 250)" id="genre-IELTS_Task_2" class="genre-btn bg-navy-card border-2 border-slate-700 p-4 rounded-xl text-left transition transform hover:-translate-y-0.5">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-slate-200 font-black text-sm uppercase">IELTS Task 2</span>
+          <span class="bg-navy text-slate-400 text-[11px] px-2 py-0.5 rounded-full border border-slate-700 font-bold">Min 250 w</span>
+        </div>
+        <div class="text-xs text-slate-400 font-medium">Academic essays: opinion, problem-solution & discussion.</div>
+      </button>
+
+      <button type="button" onclick="selectGenre('Technical_Report', 300)" id="genre-Technical_Report" class="genre-btn bg-navy-card border-2 border-slate-700 p-4 rounded-xl text-left transition transform hover:-translate-y-0.5">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-slate-200 font-black text-sm uppercase">UTAS Project Report</span>
+          <span class="bg-navy text-slate-400 text-[11px] px-2 py-0.5 rounded-full border border-slate-700 font-bold">Min 300 w</span>
+        </div>
+        <div class="text-xs text-slate-400 font-medium">Foundation technical reports, findings & recommendations.</div>
+      </button>
+
+      <button type="button" onclick="selectGenre('Custom_Paragraph', 150)" id="genre-Custom_Paragraph" class="genre-btn bg-navy-card border-2 border-slate-700 p-4 rounded-xl text-left transition transform hover:-translate-y-0.5">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-slate-200 font-black text-sm uppercase">EAP Paragraph</span>
+          <span class="bg-navy text-slate-400 text-[11px] px-2 py-0.5 rounded-full border border-slate-700 font-bold">Min 150 w</span>
+        </div>
+        <div class="text-xs text-slate-400 font-medium">Cause/effect, summary & short academic compositions.</div>
+      </button>
+    </div>
+
+    <!-- Prompt / Chart context input -->
+    <div class="bg-navy-dark/70 p-3 rounded-xl border border-slate-700">
+      <label class="block text-slate-300 text-xs font-bold mb-1">
+        Assignment Question / Chart Description (Provides ground truth for Task Achievement):
+      </label>
+      <textarea id="promptContext" rows="2" class="w-full bg-navy border border-gold/50 rounded-lg p-2.5 text-xs md:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber custom-scrollbar" placeholder="e.g., The line graph shows the percentage of car ownership in Oman between 2010 and 2025..."></textarea>
+    </div>
+  </div>
+
+  <div class="mt-6 border-t border-slate-700/70 pt-6">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2 text-amber font-black text-sm md:text-base uppercase tracking-wider">
+        <span class="w-6 h-6 rounded-full bg-amber text-navy flex items-center justify-center text-xs font-black">2</span>
+        Student Submission Intake (Handwritten Scan or Typed Text)
+      </div>
+      <button onclick="loadSampleStudentDemo()" class="text-xs text-amber hover:text-gold font-bold underline">
+        Load Sample Student Draft (Demo)
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+      <!-- Student Info -->
+      <div class="md:col-span-4 bg-navy-card p-4 rounded-xl border border-gold/40 flex flex-col justify-between">
+        <div>
+          <label class="block text-slate-300 text-xs font-bold mb-1">Student Identifier / ID:</label>
+          <input type="text" id="studentIdInput" value="32S25123" class="w-full bg-navy border border-slate-600 rounded-lg p-2.5 text-xs md:text-sm text-amber font-bold mb-3 focus:outline-none focus:ring-1 focus:ring-amber" placeholder="e.g., 32S25123 or S01">
+
+          <label class="block text-slate-300 text-xs font-bold mb-1">Student Full Name (Optional):</label>
+          <input type="text" id="studentNameInput" value="ABDUL RAHMAN AL-NAUMANI" class="w-full bg-navy border border-slate-600 rounded-lg p-2.5 text-xs md:text-sm text-slate-100 mb-3 focus:outline-none focus:ring-1 focus:ring-amber" placeholder="e.g., Ahmed Al-Harthi">
+        </div>
+
+        <div class="bg-navy p-3 rounded-lg border border-slate-800 text-[11px] text-slate-400">
+          <span class="text-amber font-bold">Multimodal OCR Tip:</span> You can take phone photos of handwritten sheets (Page 1 & 2) and upload below.
+        </div>
+      </div>
+
+      <!-- File Upload & Scans Preview -->
+      <div class="md:col-span-8 bg-navy-card p-4 rounded-xl border border-gold/40 flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-slate-300 text-xs font-bold">
+              Upload Handwritten Papers (Up to 2 images/scans per submission):
+            </label>
+            <span id="fileCountBadge" class="text-[11px] text-slate-400 font-semibold">0 files selected</span>
+          </div>
+          
+          <div class="relative border-2 border-dashed border-amber/60 hover:border-gold rounded-xl p-4 text-center cursor-pointer bg-navy/50 transition">
+            <input type="file" id="fileUploadInput" multiple accept="image/*,application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleFileSelection(event)">
+            <div class="flex flex-col items-center pointer-events-none">
+              <span class="text-2xl mb-1">📸</span>
+              <span class="text-xs md:text-sm font-bold text-slate-200">Click or Drag & Drop Handwritten Photos (JPG/PNG)</span>
+              <span class="text-[11px] text-slate-400 mt-0.5">Select Page 1 and Page 2 together</span>
+            </div>
+          </div>
+
+          <!-- Thumbnail strip -->
+          <div id="imagePreviewStrip" class="flex flex-wrap gap-2 mt-3"></div>
+        </div>
+
+        <!-- Fallback typed text -->
+        <div class="mt-3">
+          <label class="block text-slate-300 text-xs font-bold mb-1">
+            Or Paste Handwritten Transcript / Typed Draft directly:
+          </label>
+          <textarea id="typedTextInput" rows="3" class="w-full bg-navy border border-slate-700 rounded-lg p-2.5 text-xs md:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber custom-scrollbar" placeholder="Paste student text here if image upload is not used..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-700/70 pt-5">
+    <div class="text-xs text-slate-400">
+      ⚡ Powered by Gemini Multimodal Vision • Strict Socratic Feedback • No Answer Leaks
+    </div>
+    <div class="flex items-center gap-3 w-full sm:w-auto">
+      <button onclick="clearCurrentForm()" class="w-1/3 sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs md:text-sm font-bold py-3.5 px-4 rounded-xl transition">
+        Clear
+      </button>
+      <button id="evaluateBtn" onclick="runDiagnosticEvaluation()" class="w-2/3 sm:w-auto bg-amber hover:bg-gold text-navy font-black text-sm md:text-base py-3.5 px-8 rounded-xl uppercase tracking-wider shadow-xl transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+        <span>🚀 Start Diagnostic Evaluation</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress Spinner overlay (hidden by default) -->
+  <div id="evaluatingIndicator" class="hidden mt-4 p-4 bg-navy-dark/95 border-2 border-amber rounded-xl text-center">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-amber border-t-transparent mb-2"></div>
+    <div class="text-amber font-black text-sm uppercase tracking-wider" id="evaluatingStatusText">Transcribing handwriting and analyzing linguistic breakdown...</div>
+    <div class="text-slate-400 text-xs mt-1">Applying 40-point EAP rubric & generating Socratic clues...</div>
+  </div>
+</div>
+
+<div id="resultsDashboard" class="w-full max-w-7xl hidden">
+  <div class="bg-navy-surface gold-border rounded-2xl p-5 md:p-8 shadow-2xl relative mb-8">
+    
+    <!-- Top Result Banner -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-2 border-gold/40 pb-5 gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-emerald-600 text-white text-xs font-black px-2.5 py-0.5 rounded uppercase">Evaluation Complete</span>
+          <span id="resGenreBadge" class="bg-navy text-amber text-xs font-bold px-2 py-0.5 rounded border border-amber/40">IELTS Task 1</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-black text-white" id="resStudentTitle">
+          Diagnostic Evaluation: S14
+        </h2>
+        <p class="text-slate-300 text-xs md:text-sm font-semibold" id="resStudentName">
+          Student: ABDUL RAHMAN AL-NAUMANI
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- 40 Point Score Capsule -->
+        <div class="bg-navy-dark p-3 px-5 rounded-xl amber-border text-center">
+          <div class="text-slate-400 text-xs font-bold uppercase">Formative Total Score</div>
+          <div class="text-3xl md:text-4xl font-black text-amber" id="resTotalScore">-- / 40</div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button onclick="downloadOfficialReportPdf()" class="bg-amber hover:bg-gold text-navy text-xs md:text-sm font-black py-3 px-4 rounded-xl transition shadow-lg flex items-center justify-center gap-1.5">
+            <span>📄</span> Download PDF
+          </button>
+          <button onclick="downloadQuizAsHtml()" class="bg-navy border border-amber hover:bg-navy-card text-amber text-xs md:text-sm font-black py-3 px-4 rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg">
+            <span>📥</span> Download Quiz HTML
+          </button>
+          <button onclick="printOfficialCard()" class="bg-navy border border-gold/60 hover:bg-navy-card text-gold text-xs md:text-sm font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-1.5">
+            <span>🖨️</span> Print Card
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Word Count Gate & Rubric 4-Card Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mt-6">
+      <!-- Word Count Box -->
+      <div class="bg-navy-card p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
+        <span class="text-slate-400 text-xs font-bold uppercase">Transcribed Length</span>
+        <div class="my-2">
+          <span class="text-3xl font-black text-white" id="resWordCount">0</span>
+          <span class="text-xs text-slate-400" id="resWordTarget">/ 150 words</span>
+        </div>
+        <div id="resWordGateBadge" class="text-xs font-black px-2 py-1 rounded text-center">Checking...</div>
+      </div>
+
+      <!-- Task Achievement -->
+      <div class="bg-navy-card p-4 rounded-xl border border-gold/40">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-extrabold text-amber uppercase">Task Achievement</span>
+          <span class="text-base font-black text-white" id="resScoreTA">--/10</span>
+        </div>
+        <div class="w-full bg-navy rounded-full h-2 my-2 overflow-hidden">
+          <div id="barTA" class="bg-amber h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="text-[11px] text-slate-300 line-clamp-3" id="resNotesTA">Data coverage evaluation</div>
+      </div>
+
+      <!-- Coherence & Cohesion -->
+      <div class="bg-navy-card p-4 rounded-xl border border-gold/40">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-extrabold text-amber uppercase">Coherence & Cohesion</span>
+          <span class="text-base font-black text-white" id="resScoreCC">--/10</span>
+        </div>
+        <div class="w-full bg-navy rounded-full h-2 my-2 overflow-hidden">
+          <div id="barCC" class="bg-amber h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="text-[11px] text-slate-300">Paragraph sequencing and linking clarity.</div>
+      </div>
+
+      <!-- Lexical Resource -->
+      <div class="bg-navy-card p-4 rounded-xl border border-gold/40">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-extrabold text-amber uppercase">Lexical Resource</span>
+          <span class="text-base font-black text-white" id="resScoreLR">--/10</span>
+        </div>
+        <div class="w-full bg-navy rounded-full h-2 my-2 overflow-hidden">
+          <div id="barLR" class="bg-amber h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="text-[11px] text-slate-300">Academic vocabulary, precision and spelling.</div>
+      </div>
+
+      <!-- Grammatical Accuracy -->
+      <div class="bg-navy-card p-4 rounded-xl border border-gold/40">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-xs font-extrabold text-amber uppercase">Grammatical Range</span>
+          <span class="text-base font-black text-white" id="resScoreGRA">--/10</span>
+        </div>
+        <div class="w-full bg-navy rounded-full h-2 my-2 overflow-hidden">
+          <div id="barGRA" class="bg-amber h-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <div class="text-[11px] text-slate-300">Clause boundaries and error frequency.</div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-lg md:text-xl font-black text-amber uppercase tracking-wider flex items-center gap-2">
+          <span>🧠 Socratic Diagnostic Clues</span>
+          <span id="resErrorCountBadge" class="text-xs font-bold px-2 py-0.5 bg-red-900/60 text-red-200 border border-red-500 rounded-full">0 Errors</span>
+        </h3>
+        <span class="text-xs text-slate-400">Guiding prompts for student self-repair (No direct answers)</span>
+      </div>
+
+      <div class="overflow-x-auto custom-scrollbar rounded-xl amber-border">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gold text-navy text-xs md:text-sm font-black uppercase">
+              <th class="p-3 border-r border-navy w-1/6">Category</th>
+              <th class="p-3 border-r border-navy w-2/6">Original Student Snippet</th>
+              <th class="p-3 w-3/6">Socratic Self-Repair Guiding Clue</th>
+            </tr>
+          </thead>
+          <tbody id="resDiagnosticTableBody" class="text-xs md:text-sm divide-y divide-slate-700/60 bg-navy-surface">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-8 border-t border-slate-700/60 pt-6">
+      <h3 class="text-lg md:text-xl font-black text-amber uppercase tracking-wider mb-2">
+        📝 Full Verbatim Transcription (Errors in Red)
+      </h3>
+      <p class="text-xs text-slate-400 mb-3">
+        Exact transcription of the handwritten paper. Highlighted segments link to the Socratic clues above.
+      </p>
+      <div id="resHighlightedTranscript" class="bg-navy-dark p-5 rounded-xl border border-slate-700 text-sm md:text-base leading-relaxed text-slate-200 custom-scrollbar max-h-80 overflow-y-auto">
+        <!-- Rendered with inline red spans -->
+      </div>
+    </div>
+
+    <div class="mt-6 bg-navy-card border border-amber/60 p-4 rounded-xl flex items-start gap-3">
+      <span class="text-2xl">🌟</span>
+      <div>
+        <div class="text-amber font-extrabold text-xs md:text-sm uppercase tracking-wide">Competence Recognition (Self-Determination Theory)</div>
+        <p class="text-xs md:text-sm text-slate-200 mt-0.5" id="resEncouragementText">
+          Encouraging remark will appear here.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10 border-t-2 border-gold/40 pt-8">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-lg md:text-xl font-black text-amber uppercase tracking-wider flex items-center gap-2">
+            <span>📋 Official UTAS Evaluation Card (PDF Preview)</span>
+          </h3>
+          <p class="text-xs text-slate-400">
+            This card is ready to be exported to PDF or printed directly for official student records.
+          </p>
+        </div>
+        <button onclick="downloadOfficialReportPdf()" class="bg-navy-dark hover:bg-navy border border-amber text-amber text-xs font-black py-2 px-4 rounded-lg transition flex items-center gap-1">
+          📥 Save This Card as PDF
+        </button>
+      </div>
+
+      <!-- Exact Replicated UTAS ELC Report Card Container -->
+      <div class="bg-slate-200 p-3 sm:p-6 rounded-2xl overflow-x-auto shadow-inner">
+        <div id="officialPdfCard" class="bg-white text-slate-900 font-sans p-6 md:p-8 rounded-lg shadow-xl max-w-4xl mx-auto border border-slate-300" style="min-width: 680px;">
+          
+          <!-- Card Header Banner -->
+          <div style="background-color: #0c1a30;" class="text-white p-5 rounded-md mb-5">
+            <h2 class="text-xl md:text-2xl font-black tracking-wide uppercase m-0 leading-tight">
+              UNIVERSITY OF TECHNOLOGY AND APPLIED SCIENCES - IBRA
+            </h2>
+            <div class="text-xs md:text-sm font-semibold text-slate-200 mt-1">
+              English Language Center (ELC) - EAP Writing Diagnostic & Evaluation Card
+            </div>
+            <div class="text-xs font-bold text-amber-400 mt-0.5">
+              Resource Person: Muhammad Shahzad _ Utas_Ibra
+            </div>
+          </div>
+
+          <!-- Student & Meta Box -->
+          <div style="background-color: #f8fafc; border: 1px solid #cbd5e1;" class="rounded-md p-3.5 px-4 mb-5 flex flex-col sm:flex-row justify-between text-xs md:text-sm gap-2">
+            <div>
+              <div class="font-bold text-slate-900" id="cardStudentHeader">
+                Student: Zahrah Said Nasser Al Maskari (ID: 32S23101)
+              </div>
+              <div class="text-slate-700 font-bold mt-0.5" id="cardGenre">
+                Draft - 1
+              </div>
+            </div>
+            <div class="sm:text-right">
+              <div class="font-bold text-slate-800" id="cardWordCount">
+                Word Count: 163 / Min: 150
+              </div>
+              <div class="text-slate-600 font-medium mt-0.5" id="cardDate">
+                Date: 9/28/2026
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Title -->
+          <h3 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-wide mb-3">
+            40-POINT FORMATIVE RUBRIC ASSESSMENT
+          </h3>
+
+          <!-- 5-Pill Score Grid -->
+          <div class="grid grid-cols-5 gap-2.5 mb-4 text-center">
+            <div style="background-color: #f0f9ff; border: 1px solid #7dd3fc;" class="p-2.5 rounded-md">
+              <div class="text-[10px] md:text-xs font-bold text-slate-700">Task Achievement</div>
+              <div class="text-base md:text-lg font-black text-slate-900 mt-1" id="cardScoreTA">4/10</div>
+            </div>
+            <div style="background-color: #f0f9ff; border: 1px solid #7dd3fc;" class="p-2.5 rounded-md">
+              <div class="text-[10px] md:text-xs font-bold text-slate-700">Coherence & Cohesion</div>
+              <div class="text-base md:text-lg font-black text-slate-900 mt-1" id="cardScoreCC">4/10</div>
+            </div>
+            <div style="background-color: #f0f9ff; border: 1px solid #7dd3fc;" class="p-2.5 rounded-md">
+              <div class="text-[10px] md:text-xs font-bold text-slate-700">Lexical Resource</div>
+              <div class="text-base md:text-lg font-black text-slate-900 mt-1" id="cardScoreLR">4/10</div>
+            </div>
+            <div style="background-color: #f0f9ff; border: 1px solid #7dd3fc;" class="p-2.5 rounded-md">
+              <div class="text-[10px] md:text-xs font-bold text-slate-700">Grammar Accuracy</div>
+              <div class="text-base md:text-lg font-black text-slate-900 mt-1" id="cardScoreGRA">3/10</div>
+            </div>
+            <div style="background-color: #e0f2fe; border: 2px solid #38bdf8;" class="p-2.5 rounded-md">
+              <div class="text-[10px] md:text-xs font-black text-sky-950 uppercase">Total Score</div>
+              <div class="text-base md:text-lg font-black text-sky-700 mt-1" id="cardTotalScore">15/40</div>
+            </div>
+          </div>
+
+          <!-- Task Coverage & Section Deductions -->
+          <div class="mb-5 text-xs md:text-sm text-slate-800">
+            <div class="font-black text-slate-900 mb-0.5">Task Coverage & Section Deductions:</div>
+            <p class="leading-relaxed text-slate-700 m-0" id="cardTaskCoverage">
+              The student identifies the general overall trajectory, but confuses key company trends and omits secondary data comparisons.
+            </p>
+          </div>
+
+          <!-- Diagnostic Breakdown & Socratic Hints -->
+          <div class="mb-5">
+            <div class="font-black text-slate-900 text-xs md:text-sm mb-2" id="cardErrorHeading">
+              Diagnostic Breakdown & Socratic Hints (0 Detected)
+            </div>
+            <div id="cardHintsContainer" class="space-y-2.5">
+              <!-- Replicated red/pink hints will populate here dynamically -->
+            </div>
+          </div>
+
+          <!-- Overall Tutor Feedback & Competence Encouragement -->
+          <div style="background-color: #ecfdf5; border: 1px solid #34d399;" class="p-3.5 rounded-md text-xs md:text-sm text-slate-800">
+            <div class="font-black text-emerald-900 mb-1">
+              Overall Tutor Feedback & Competence Encouragement:
+            </div>
+            <p class="leading-relaxed text-slate-700 m-0" id="cardFeedbackText">
+              Student feedback note here.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 border-t-2 border-gold/40 pt-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-lg md:text-xl font-black text-amber uppercase tracking-wider">
+            🎯 Interactive 10-Item Targeted Reinforcement Practice
+          </h3>
+          <p class="text-xs text-slate-400">
+            Formative multiple-choice items generated dynamically to target this student's exact errors.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="downloadQuizAsHtml()" class="text-xs bg-amber hover:bg-gold text-navy font-black py-2 px-3.5 rounded-lg transition shadow flex items-center gap-1">
+            <span>📥</span> Download Quiz (.html)
+          </button>
+          <button onclick="copyQuizHtmlToClipboard()" class="text-xs bg-navy-card border border-gold text-gold hover:bg-navy font-bold py-2 px-3 rounded-lg transition flex items-center gap-1">
+            <span>📋</span> Copy Quiz HTML
+          </button>
+          <button onclick="revealAllAnswers()" class="text-xs bg-navy border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-800 font-bold py-2 px-3 rounded-lg transition">
+            Show Answers
+          </button>
+        </div>
+      </div>
+
+      <div id="resQuizContainer" class="space-y-4">
+        <!-- Dynamically rendered questions -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="rubricModal" class="fixed inset-0 bg-navy-dark/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-navy-surface gold-border max-w-2xl w-full p-6 rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar">
+    <div class="flex justify-between items-center border-b border-gold/40 pb-3 mb-4">
+      <h3 class="text-lg font-black text-amber uppercase">40-Point Formative Rubric Standard</h3>
+      <button onclick="toggleRubricModal()" class="text-slate-400 hover:text-white font-black text-lg">✕</button>
+    </div>
+    <div class="space-y-3 text-xs md:text-sm text-slate-200">
+      <div class="p-3 bg-navy-card rounded-lg border border-slate-700">
+        <span class="text-amber font-bold">1. Task Achievement / Response (10 Marks):</span>
+        <p class="text-slate-400 mt-1">Complete coverage of trends, key data points, overviews, and word count adherence (150w / 250w).</p>
+      </div>
+      <div class="p-3 bg-navy-card rounded-lg border border-slate-700">
+        <span class="text-amber font-bold">2. Coherence and Cohesion (10 Marks):</span>
+        <p class="text-slate-400 mt-1">Clear paragraph structure, logical flow of ideas, and precise use of linking devices.</p>
+      </div>
+      <div class="p-3 bg-navy-card rounded-lg border border-slate-700">
+        <span class="text-amber font-bold">3. Lexical Resource (10 Marks):</span>
+        <p class="text-slate-400 mt-1">Varied academic vocabulary, correct trend collocations, and spelling accuracy.</p>
+      </div>
+      <div class="p-3 bg-navy-card rounded-lg border border-slate-700">
+        <span class="text-amber font-bold">4. Grammatical Range and Accuracy (10 Marks):</span>
+        <p class="text-slate-400 mt-1">Control of clause boundaries (no run-ons/fragments), correct subject-verb agreement, and trend prepositions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="taxonomyModal" class="fixed inset-0 bg-navy-dark/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-navy-surface amber-border max-w-2xl w-full p-6 rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto custom-scrollbar">
+    <div class="flex justify-between items-center border-b border-amber/40 pb-3 mb-4">
+      <h3 class="text-lg font-black text-amber uppercase">Standardized Diagnostic Error Taxonomy</h3>
+      <button onclick="toggleTaxonomyModal()" class="text-slate-400 hover:text-white font-black text-lg">✕</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300">
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">SYNTAX_RUN_ON:</span> Two clauses joined without punctuation or conjunction.
+      </div>
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">SYNTAX_FRAGMENT:</span> Incomplete thought or dependent clause standing alone.
+      </div>
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">TREND_PREPOSITION:</span> Confusing "by" vs "to", "between...to", etc.
+      </div>
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">SUBJECT_VERB_AGREEMENT:</span> Mismatch (e.g. "it were", "they was").
+      </div>
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">TENSE_INCONSISTENCY:</span> Unjustified shift between past and present.
+      </div>
+      <div class="p-2.5 bg-navy-card rounded border border-slate-700">
+        <span class="text-amber font-bold">LEXICAL_COLLOCATION:</span> Unnatural word pairing or incorrect register.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Toast Notification -->
+<div id="toastBox" class="fixed bottom-6 right-6 bg-navy-surface border-2 border-gold text-amber px-5 py-3 rounded-xl text-sm font-black shadow-2xl transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none z-50">
+  <span id="toastText">Notification</span>
+</div>
+
+<script>
+  // Active state variables
+  let currentGenre = "IELTS_Task_1";
+  let targetWordMin = 150;
+  let selectedFilesBase64 = []; // stores [{ mimeType, data }]
+  let currentQuizData = [];
+
+  // Genre selection handler
+  function selectGenre(genre, minWords) {
+    currentGenre = genre;
+    targetWordMin = minWords;
+
+    document.querySelectorAll('.genre-btn').forEach(btn => {
+      btn.classList.remove('border-amber', 'border-slate-700');
+      btn.classList.add('border-slate-700');
+    });
+
+    const activeBtn = document.getElementById(`genre-${genre}`);
+    if (activeBtn) {
+      activeBtn.classList.remove('border-slate-700');
+      activeBtn.classList.add('border-amber');
+    }
+    showToast(`Genre calibrated: ${genre} (Min: ${minWords} words)`);
+  }
+
+  // File selection & base64 conversion
+  function handleFileSelection(event) {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
+
+    if (files.length > 2) {
+      showToast("Note: Recommended up to 2 pages per student draft.");
+    }
+
+    selectedFilesBase64 = [];
+    const previewContainer = document.getElementById('imagePreviewStrip');
+    previewContainer.innerHTML = '';
+
+    files.slice(0, 2).forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fullBase64 = e.target.result;
+        const [meta, pureData] = fullBase64.split(';base64,');
+        const mimeType = meta.replace('data:', '');
+
+        selectedFilesBase64.push({ mimeType: mimeType, data: pureData });
+
+        // Add visual thumbnail
+        const thumb = document.createElement('div');
+        thumb.className = "relative rounded-lg overflow-hidden border-2 border-gold h-16 w-16 bg-navy-dark flex items-center justify-center";
+        thumb.innerHTML = `
+          <img src="${fullBase64}" class="h-full w-full object-cover">
+          <span class="absolute bottom-0 inset-x-0 bg-navy/80 text-[10px] text-center font-bold text-amber">Pg ${index + 1}</span>
+        `;
+        previewContainer.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('fileCountBadge').innerText = `${Math.min(files.length, 2)} page(s) attached`;
+    showToast("Uploaded handwritten pages encoded for OCR.");
+  }
+
+  // Load sample IELTS chart prompt
+  function loadSamplePrompt() {
+    document.getElementById('promptContext').value = 
+      "The line graph shows the percentage of car ownership among households in Oman between 2010 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. (Write at least 150 words).";
+    showToast("Loaded IELTS Task 1 sample prompt.");
+  }
+
+  // Load sample student draft for instant demonstration
+  function loadSampleStudentDemo() {
+    selectGenre('IELTS_Task_1', 150);
+    document.getElementById('studentIdInput').value = "32S25123";
+    document.getElementById('studentNameInput').value = "ABDUL RAHMAN AHMED AL-NAUMANI";
+    loadSamplePrompt();
+    document.getElementById('typedTextInput').value = 
+      "The line graph illustrate the percentage of car ownership in Oman between 2010 to 2025. Overall, it can be clearly seen that car ownership rose significant over the period.\n\nIn 2010, the percentage of families with one car were approximately 35%. Following this, the rate increased by 50% in 2018. However, between 2018 and 2022 it drop slightly it recovered in 2025 to reach 70%. Regarding households with two cars, the figure was low at the start, it increased gradual until the end.";
+    
+    // Provide instant benchmark evaluation data so download buttons work right away
+    const sampleEvaluation = {
+      student_id: "32S25123",
+      student_name: "ABDUL RAHMAN AHMED AL-NAUMANI",
+      genre: "IELTS_Task_1",
+      word_count: 86,
+      word_limit_status: {
+        required_minimum: 150,
+        meets_limit: false,
+        difference: -64,
+        status_message: "Deficit of 64 words below the 150-word requirement."
+      },
+      rubric_assessment: {
+        task_achievement: 5,
+        coherence_cohesion: 6,
+        lexical_resource: 5,
+        grammatical_accuracy: 5,
+        total_score: 21,
+        task_coverage_notes: "Overall trajectory identified, but car ownership categories need fuller numerical comparison and 150-word threshold was not met."
+      },
+      diagnostic_breakdowns: [
+        { error_category: "SUBJECT_VERB_AGREEMENT", original_text: "The line graph illustrate", diagnostic_hint: "The noun phrase 'The line graph' is singular. What ending does the verb need in the present simple?", fix_tip: "Change 'illustrate' to singular 'illustrates'." },
+        { error_category: "TREND_PREPOSITION", original_text: "between 2010 to 2025", diagnostic_hint: "What preposition always pairs with 'between' when expressing a range of dates?", fix_tip: "Use 'between 2010 and 2025' or 'from 2010 to 2025'." },
+        { error_category: "LEXICAL_COLLOCATION", original_text: "rose significant", diagnostic_hint: "Which part of speech describes how an action verb happened: an adjective or an adverb?", fix_tip: "Use the adverb form 'rose significantly'." },
+        { error_category: "SUBJECT_VERB_AGREEMENT", original_text: "families with one car were", diagnostic_hint: "What is the true grammatical head noun of the subject: 'families' or 'the percentage'?", fix_tip: "The percentage was approximately 35%." },
+        { error_category: "SYNTAX_RUN_ON", original_text: "it drop slightly it recovered", diagnostic_hint: "Two clauses are colliding without punctuation. How can you split or link them?", fix_tip: "Insert a semicolon or conjunction: 'it dropped slightly; however, it recovered'." }
+      ],
+      full_transcription_html: "The line graph <span class=\"error-highlight\">illustrate</span> the percentage of car ownership in Oman <span class=\"error-highlight\">between 2010 to 2025</span>. Overall, it can be clearly seen that car ownership <span class=\"error-highlight\">rose significant</span> over the period.<br><br>In 2010, the percentage of families with one car <span class=\"error-highlight\">were</span> approximately 35%. Following this, the rate increased by 50% in 2018. However, between 2018 and 2022 <span class=\"error-highlight\">it drop slightly it recovered</span> in 2025 to reach 70%. Regarding households with two cars, the figure was low at the start, it increased <span class=\"error-highlight\">gradual</span> until the end.",
+      competence_encouragement: "Excellent identification of key trends and chronological sequencing! Refine your verb forms and prepositions to achieve Band 6.5+.",
+      reinforcement_quiz: getDefaultQuizItems()
+    };
+
+    renderEvaluationResults(sampleEvaluation, "ABDUL RAHMAN AHMED AL-NAUMANI");
+    showToast("Loaded sample student draft & benchmark evaluation!");
+  }
+
+  function getDefaultQuizItems() {
+    return [
+      {
+        question_number: 1,
+        target_category: "SUBJECT_VERB_AGREEMENT",
+        sentence_stem: "The line graph ________ the rate of water consumption in Muscat between 2015 and 2025.",
+        options: ["illustrates", "illustrate", "are illustrating", "illustrated by"],
+        correct_option_index: 0,
+        explanation: "Singular third-person subject ('The line graph') takes the singular verb ending -s in the present simple."
+      },
+      {
+        question_number: 2,
+        target_category: "TREND_PREPOSITION",
+        sentence_stem: "Oil production fluctuated noticeably ________ 2010 and 2018.",
+        options: ["between", "from", "since", "until"],
+        correct_option_index: 0,
+        explanation: "The preposition 'between' strictly pairs with 'and' (between X and Y)."
+      },
+      {
+        question_number: 3,
+        target_category: "LEXICAL_COLLOCATION",
+        sentence_stem: "Student enrollment increased ________ from 1,200 to over 3,500 candidates.",
+        options: ["significantly", "significant", "significance", "more significant"],
+        correct_option_index: 0,
+        explanation: "Adverbs of degree (ending in -ly) modify action verbs like 'increased'."
+      },
+      {
+        question_number: 4,
+        target_category: "TREND_PREPOSITION",
+        sentence_stem: "Renewable energy usage climbed ________ 15% in 2020 to reach 45% in 2025.",
+        options: ["by", "at", "from", "toward"],
+        correct_option_index: 0,
+        explanation: "'Rose/climbed by [margin]' indicates the amount or difference in change."
+      },
+      {
+        question_number: 5,
+        target_category: "SYNTAX_RUN_ON",
+        sentence_stem: "The number of visitors dropped in 2020, ________ it rebounded rapidly the following year.",
+        options: ["however,", "but", "so that", "because"],
+        correct_option_index: 1,
+        explanation: "The coordinating conjunction 'but' correctly connects two independent clauses with a comma."
+      },
+      {
+        question_number: 6,
+        target_category: "SUBJECT_VERB_AGREEMENT",
+        sentence_stem: "The proportion of graduates seeking IT employment ________ steadily each semester.",
+        options: ["is rising", "are rising", "rise", "were rose"],
+        correct_option_index: 0,
+        explanation: "The singular subject is 'The proportion', which requires singular agreement ('is rising')."
+      },
+      {
+        question_number: 7,
+        target_category: "TENSE_INCONSISTENCY",
+        sentence_stem: "Between 2012 and 2016, sales ________ by 25% before plateauing.",
+        options: ["declined", "declines", "is declining", "has decline"],
+        correct_option_index: 0,
+        explanation: "Historical past time frames require the simple past tense ('declined')."
+      },
+      {
+        question_number: 8,
+        target_category: "LEXICAL_COLLOCATION",
+        sentence_stem: "There was a ________ increase in the consumption of electric vehicles across the Sultanate.",
+        options: ["dramatic", "dramatically", "drama", "more dramatically"],
+        correct_option_index: 0,
+        explanation: "Adjectives (e.g., 'dramatic') modify noun phrases ('increase')."
+      },
+      {
+        question_number: 9,
+        target_category: "SYNTAX_FRAGMENT",
+        sentence_stem: "________ the figures stabilized toward the end of the research period, remaining at 60%.",
+        options: ["Ultimately,", "Although", "Because", "Despite"],
+        correct_option_index: 0,
+        explanation: "'Ultimately,' acts as a sentence adverb introducing a complete independent clause."
+      },
+      {
+        question_number: 10,
+        target_category: "MECHANICS_PUNCTUATION",
+        sentence_stem: "________ the percentage of solar power adoption stood at less than 5%.",
+        options: ["In contrast,", "In contrast", "In, contrast", "In contrasting,"],
+        correct_option_index: 0,
+        explanation: "Fronted sentence linkers and transition markers must be followed by a comma."
+      }
+    ];
+  }
+
+  // Clear inputs
+  function clearCurrentForm() {
+    document.getElementById('typedTextInput').value = "";
+    document.getElementById('fileUploadInput').value = "";
+    document.getElementById('imagePreviewStrip').innerHTML = "";
+    document.getElementById('fileCountBadge').innerText = "0 files selected";
+    selectedFilesBase64 = [];
+    document.getElementById('resultsDashboard').classList.add('hidden');
+    showToast("Form cleared.");
+  }
+
+  // Modal helpers
+  function toggleRubricModal() {
+    document.getElementById('rubricModal').classList.toggle('hidden');
+  }
+  function toggleTaxonomyModal() {
+    document.getElementById('taxonomyModal').classList.toggle('hidden');
+  }
+
+  // Toast feedback
+  function showToast(message) {
+    const box = document.getElementById('toastBox');
+    document.getElementById('toastText').innerText = message;
+    box.classList.remove('translate-y-24', 'opacity-0');
+    setTimeout(() => {
+      box.classList.add('translate-y-24', 'opacity-0');
+    }, 2800);
+  }
+
+  async function runDiagnosticEvaluation() {
+    const typedText = document.getElementById('typedTextInput').value.trim();
+    const hasFiles = selectedFilesBase64.length > 0;
+
+    if (!typedText && !hasFiles) {
+      showToast("Please upload handwriting scans or paste student text!");
+      return;
+    }
+
+    const studentId = document.getElementById('studentIdInput').value.trim() || "S01";
+    const studentName = document.getElementById('studentNameInput').value.trim() || "Anonymous Student";
+    const promptContext = document.getElementById('promptContext').value.trim() || "Evaluate against standard EAP writing criteria.";
+
+    // UI state loading
+    const evaluateBtn = document.getElementById('evaluateBtn');
+    const indicator = document.getElementById('evaluatingIndicator');
+    const statusText = document.getElementById('evaluatingStatusText');
+    
+    evaluateBtn.disabled = true;
+    evaluateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    indicator.classList.remove('hidden');
+    document.getElementById('resultsDashboard').classList.add('hidden');
+
+    // System instruction strictly tuned for Socratic evaluation
+    const systemPrompt = `You are an expert diagnostic EAP writing tutor and IELTS examiner at UTAS Ibra (ELC) supervised by Muhammad Shahzad.
+Pedagogical Rule: Cognitive Scaffolding (Wood et al., 1976). NEVER rewrite student sentences or give direct answers.
+1. Transcribe handwriting faithfully verbatim. Extract student name and student ID if written on the paper/script header.
+2. Check word count against ${targetWordMin} words.
+3. Grade out of 40 (10 points each: task_achievement, coherence_cohesion, lexical_resource, grammatical_accuracy).
+4. For each breakdown, quote exact faulty snippet, classify category (SYNTAX_RUN_ON, SYNTAX_FRAGMENT, TREND_PREPOSITION, SUBJECT_VERB_AGREEMENT, TENSE_INCONSISTENCY, LEXICAL_COLLOCATION, MECHANICS_PUNCTUATION), and write a simple Socratic hint.
+5. In full_transcription_html, wrap each error segment in: <span class="error-highlight">[error phrase]</span>.
+6. Generate 10 multiple-choice questions targeting the student's weaknesses.
+7. Return strictly valid JSON conforming to the schema.`;
+
+    // Construct user message parts (supports Multimodal Images + Text Prompt)
+    const userParts = [];
+
+    // Attach uploaded images if provided
+    selectedFilesBase64.forEach((fileObj, idx) => {
+      userParts.push({
+        inlineData: {
+          mimeType: fileObj.mimeType,
+          data: fileObj.data
+        }
+      });
+    });
+
+    const userTextInstruction = `Student ID: ${studentId}
+Student Name: ${studentName}
+Genre: ${currentGenre}
+Required Word Count: ${targetWordMin} words.
+Assignment Prompt: ${promptContext}
+
+Student Submission Content:
+${typedText ? `[Typed Draft]:\n${typedText}` : `[See attached handwritten image(s) above for OCR transcription and grading. Extract the student name and ID if visible on the page.]`}
+
+Please evaluate this student submission and output pure JSON matching the response schema.`;
+
+    userParts.push({ text: userTextInstruction });
+
+    // Structured JSON Schema payload
+    const payload = {
+      contents: [{ parts: userParts }],
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "OBJECT",
+          properties: {
+            "student_id": { "type": "STRING" },
+            "student_name": { "type": "STRING", "description": "Student full name if written on the paper or provided in prompt" },
+            "genre": { "type": "STRING" },
+            "word_count": { "type": "INTEGER" },
+            "word_limit_status": {
+              "type": "OBJECT",
+              "properties": {
+                "required_minimum": { "type": "INTEGER" },
+                "meets_limit": { "type": "BOOLEAN" },
+                "difference": { "type": "INTEGER" },
+                "status_message": { "type": "STRING" }
+              },
+              "required": ["required_minimum", "meets_limit", "difference", "status_message"]
+            },
+            "rubric_assessment": {
+              "type": "OBJECT",
+              "properties": {
+                "task_achievement": { "type": "INTEGER" },
+                "coherence_cohesion": { "type": "INTEGER" },
+                "lexical_resource": { "type": "INTEGER" },
+                "grammatical_accuracy": { "type": "INTEGER" },
+                "total_score": { "type": "INTEGER" },
+                "task_coverage_notes": { "type": "STRING" }
+              },
+              "required": ["task_achievement", "coherence_cohesion", "lexical_resource", "grammatical_accuracy", "total_score", "task_coverage_notes"]
+            },
+            "diagnostic_breakdowns": {
+              "type": "ARRAY",
+              "items": {
+                "type": "OBJECT",
+                "properties": {
+                  "error_category": { "type": "STRING" },
+                  "original_text": { "type": "STRING" },
+                  "diagnostic_hint": { "type": "STRING" },
+                  "fix_tip": { "type": "STRING", "description": "Short actionable revision tip (e.g., 'Spell correctly as quickly')" }
+                },
+                "required": ["error_category", "original_text", "diagnostic_hint", "fix_tip"]
+              }
+            },
+            "full_transcription_html": { "type": "STRING" },
+            "competence_encouragement": { "type": "STRING" },
+            "reinforcement_quiz": {
+              "type": "ARRAY",
+              "items": {
+                "type": "OBJECT",
+                "properties": {
+                  "question_number": { "type": "INTEGER" },
+                  "target_category": { "type": "STRING" },
+                  "sentence_stem": { "type": "STRING" },
+                  "options": {
+                    "type": "ARRAY",
+                    "items": { "type": "STRING" }
+                  },
+                  "correct_option_index": { "type": "INTEGER" },
+                  "explanation": { "type": "STRING" }
+                },
+                "required": ["question_number", "target_category", "sentence_stem", "options", "correct_option_index", "explanation"]
+              }
+            }
+          },
+          "required": [
+            "student_id", "student_name", "genre", "word_count", "word_limit_status", 
+            "rubric_assessment", "diagnostic_breakdowns", "full_transcription_html", 
+            "competence_encouragement", "reinforcement_quiz"
+          ]
+        }
+      }
+    };
+
+    // Canvas environment automatically injects the active key when empty string is provided
+    const apiKey = "";
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    try {
+      statusText.innerText = "Analyzing handwriting & computing 40-point rubric...";
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Google API Server returned HTTP ${response.status}: ${errorBody.substring(0, 150)}`);
+      }
+
+      const result = await response.json();
+      const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!rawJson) {
+        throw new Error("Empty diagnostic response from Gemini.");
+      }
+
+      const evaluationData = JSON.parse(rawJson);
+      renderEvaluationResults(evaluationData, studentName);
+      showToast("Diagnostic evaluation completed successfully!");
+
+    } catch (err) {
+      console.error(err);
+      showToast("Evaluation failed: " + err.message);
+    } finally {
+      evaluateBtn.disabled = false;
+      evaluateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      indicator.classList.add('hidden');
+    }
+  }
+
+  function renderEvaluationResults(data, studentName) {
+    const dashboard = document.getElementById('resultsDashboard');
+    dashboard.classList.remove('hidden');
+    dashboard.scrollIntoView({ behavior: 'smooth' });
+
+    // Prefer student name extracted by OCR from the paper, otherwise fallback to typed input
+    const resolvedName = (data.student_name && data.student_name.trim() !== "" && !data.student_name.toLowerCase().includes("anonymous"))
+      ? data.student_name.trim()
+      : (studentName || document.getElementById('studentNameInput').value.trim() || "Student");
+
+    // Header info
+    document.getElementById('resStudentTitle').innerText = `Diagnostic Evaluation: ${data.student_id || 'Student'}`;
+    document.getElementById('resStudentName').innerText = `Student: ${resolvedName}`;
+    document.getElementById('resGenreBadge').innerText = (data.genre || currentGenre).replace(/_/g, ' ');
+
+    // Total Score
+    const rubric = data.rubric_assessment || {};
+    const totalScore = rubric.total_score !== undefined ? rubric.total_score : 
+      ((rubric.task_achievement || 0) + (rubric.coherence_cohesion || 0) + (rubric.lexical_resource || 0) + (rubric.grammatical_accuracy || 0));
+    document.getElementById('resTotalScore').innerText = `${totalScore} / 40`;
+
+    // Word Count & Gate
+    const wc = data.word_count || 0;
+    const minRequired = data.word_limit_status?.required_minimum || targetWordMin;
+    document.getElementById('resWordCount').innerText = wc;
+    document.getElementById('resWordTarget').innerText = `/ ${minRequired} words`;
+
+    const gateBadge = document.getElementById('resWordGateBadge');
+    if (wc >= minRequired) {
+      gateBadge.className = "text-xs font-black px-2 py-1 rounded text-center bg-emerald-600 text-white";
+      gateBadge.innerText = `✓ Meets Target (+${wc - minRequired}w)`;
+    } else {
+      gateBadge.className = "text-xs font-black px-2 py-1 rounded text-center bg-red-600 text-white";
+      gateBadge.innerText = `⚠ Deficit (-${minRequired - wc}w)`;
+    }
+
+    // Rubric Breakdown
+    document.getElementById('resScoreTA').innerText = `${rubric.task_achievement || 0}/10`;
+    document.getElementById('barTA').style.width = `${(rubric.task_achievement || 0) * 10}%`;
+    document.getElementById('resNotesTA').innerText = rubric.task_coverage_notes || "Criterion met.";
+
+    document.getElementById('resScoreCC').innerText = `${rubric.coherence_cohesion || 0}/10`;
+    document.getElementById('barCC').style.width = `${(rubric.coherence_cohesion || 0) * 10}%`;
+
+    document.getElementById('resScoreLR').innerText = `${rubric.lexical_resource || 0}/10`;
+    document.getElementById('barLR').style.width = `${(rubric.lexical_resource || 0) * 10}%`;
+
+    document.getElementById('resScoreGRA').innerText = `${rubric.grammatical_accuracy || 0}/10`;
+    document.getElementById('barGRA').style.width = `${(rubric.grammatical_accuracy || 0) * 10}%`;
+
+    // Socratic Diagnostic Error Table
+    const errorList = data.diagnostic_breakdowns || [];
+    document.getElementById('resErrorCountBadge').innerText = `${errorList.length} Errors Found`;
+    const tbody = document.getElementById('resDiagnosticTableBody');
+    tbody.innerHTML = '';
+
+    if (errorList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 italic">No significant syntactic or grammatical errors detected! Excellent execution.</td></tr>`;
+    } else {
+      errorList.forEach((err, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = idx % 2 === 0 ? "bg-navy-surface" : "bg-navy-card/40";
+        tr.innerHTML = `
+          <td class="p-3 border-r border-slate-700/60 font-mono font-bold text-amber text-xs">
+            ${err.error_category}
+          </td>
+          <td class="p-3 border-r border-slate-700/60 font-medium text-red-300">
+            "${err.original_text}"
+          </td>
+          <td class="p-3 font-semibold text-slate-100 flex items-start gap-2">
+            <span class="text-amber">💡</span>
+            <span>${err.diagnostic_hint}</span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Verbatim highlighted transcription
+    const transcriptBox = document.getElementById('resHighlightedTranscript');
+    transcriptBox.innerHTML = data.full_transcription_html || "Transcription not returned.";
+
+    // Encouragement
+    document.getElementById('resEncouragementText').innerText = 
+      data.competence_encouragement || "Great effort! Review the diagnostic hints above to self-repair your draft.";
+
+    populateOfficialPdfCard(data, resolvedName);
+
+    // Render 10-Question Reinforcement Practice
+    currentQuizData = data.reinforcement_quiz || [];
+    renderQuizQuestions(currentQuizData);
+  }
+
+  function populateOfficialPdfCard(data, studentName) {
+    const studentId = data.student_id || document.getElementById('studentIdInput').value.trim() || "S01";
+    const displayName = (data.student_name && data.student_name.trim() !== "" && !data.student_name.toLowerCase().includes("anonymous"))
+      ? data.student_name.trim()
+      : (studentName || document.getElementById('studentNameInput').value.trim() || "Student");
+    const rubric = data.rubric_assessment || {};
+    const totalScore = rubric.total_score !== undefined ? rubric.total_score : 
+      ((rubric.task_achievement || 0) + (rubric.coherence_cohesion || 0) + (rubric.lexical_resource || 0) + (rubric.grammatical_accuracy || 0));
+
+    const wc = data.word_count || 0;
+    const minRequired = data.word_limit_status?.required_minimum || targetWordMin;
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
+
+    // Header info with student name from paper/response
+    document.getElementById('cardStudentHeader').innerText = `Student: ${displayName} (ID: ${studentId})`;
+    document.getElementById('cardGenre').innerText = `Draft - 1`;
+    document.getElementById('cardWordCount').innerText = `Word Count: ${wc} / Min: ${minRequired}`;
+    document.getElementById('cardDate').innerText = `Date: ${today}`;
+
+    // Score pills
+    document.getElementById('cardScoreTA').innerText = `${rubric.task_achievement || 0}/10`;
+    document.getElementById('cardScoreCC').innerText = `${rubric.coherence_cohesion || 0}/10`;
+    document.getElementById('cardScoreLR').innerText = `${rubric.lexical_resource || 0}/10`;
+    document.getElementById('cardScoreGRA').innerText = `${rubric.grammatical_accuracy || 0}/10`;
+    document.getElementById('cardTotalScore').innerText = `${totalScore}/40`;
+
+    // Task Coverage text
+    document.getElementById('cardTaskCoverage').innerText = 
+      rubric.task_coverage_notes || "All required features and trend comparisons addressed according to EAP specifications.";
+
+    // Feedback Note
+    document.getElementById('cardFeedbackText').innerText = 
+      data.competence_encouragement || "Good progress demonstrated. Please review the specific diagnostic hints above to self-repair and refine your second draft.";
+
+    // Diagnostic breakdown cards
+    const errorList = data.diagnostic_breakdowns || [];
+    document.getElementById('cardErrorHeading').innerText = `Diagnostic Breakdown & Socratic Hints (${errorList.length} Detected)`;
+    const hintsContainer = document.getElementById('cardHintsContainer');
+    hintsContainer.innerHTML = '';
+
+    if (errorList.length === 0) {
+      hintsContainer.innerHTML = `
+        <div style="background-color: #ecfdf5; border: 1px solid #6ee7b7; padding: 12px; border-radius: 6px;" class="text-xs text-emerald-900 font-semibold">
+          ✓ No major syntactic or grammatical errors detected. Strong linguistic control displayed.
+        </div>`;
+    } else {
+      errorList.forEach(err => {
+        const card = document.createElement('div');
+        card.style.cssText = "background-color: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 6px; margin-bottom: 8px;";
+        
+        const fixTip = err.fix_tip || generateDefaultFixTip(err.error_category, err.original_text);
+
+        card.innerHTML = `
+          <div style="margin-bottom: 4px;">
+            <span style="font-weight: 800; color: #b91c1c; text-transform: uppercase; font-size: 11px;">[${err.error_category.replace(/_/g, ' ')}]</span>
+            <span style="font-weight: 700; color: #dc2626; margin-left: 4px; font-size: 12px;">"${err.original_text}"</span>
+          </div>
+          <div style="color: #334155; font-size: 12px; margin-top: 2px;">
+            <span style="font-weight: 700; color: #0f172a;">Hint:</span> ${err.diagnostic_hint}
+          </div>
+          <div style="color: #475569; font-size: 12px; margin-top: 2px;">
+            <span style="font-weight: 700; color: #1e293b;">Fix Tip:</span> ${fixTip}
+          </div>
+        `;
+        hintsContainer.appendChild(card);
+      });
+    }
+  }
+
+  // Fallback generator for fix tips if omitted by model
+  function generateDefaultFixTip(category, text) {
+    if (category.includes('PREPOSITION')) return `Ensure correct preposition pairing with trend verbs.`;
+    if (category.includes('AGREEMENT')) return `Match singular or plural subject with the correct verb form.`;
+    if (category.includes('RUN_ON')) return `Divide into two distinct clauses with a period, semicolon, or coordinating conjunction.`;
+    if (category.includes('TENSE')) return `Maintain consistent past tense throughout past-dated graphs.`;
+    return `Review spelling and natural academic collocations in your redraft.`;
+  }
+
+  function downloadOfficialReportPdf() {
+    const element = document.getElementById('officialPdfCard');
+    if (!element) return;
+
+    const studentTitle = (document.getElementById('cardStudentHeader')?.innerText || 'Student')
+      .replace(/Student:\s*/i, '')
+      .replace(/[^a-zA-Z0-9]/g, '_')
+      .substring(0, 45);
+    
+    showToast("Generating official PDF report...");
+
+    // Configure html2canvas specifically for complete, non-blank capture
+    const opt = {
+      margin:       [0.3, 0.3, 0.3, 0.3], // inches
+      filename:     `UTAS_ELC_Diagnostic_${studentTitle}_Draft1.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { 
+        scale: 2, 
+        useCORS: true, 
+        logging: false,
+        scrollY: 0,
+        scrollX: 0,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+      showToast("PDF downloaded successfully!");
+    }).catch(err => {
+      console.error("PDF download error:", err);
+      // Clean fallback directly to print dialog if canvas fails
+      window.print();
+    });
+  }
+
+  function printOfficialCard() {
+    window.print();
+  }
+
+  function renderQuizQuestions(quizItems) {
+    const container = document.getElementById('resQuizContainer');
+    container.innerHTML = '';
+
+    if (!quizItems || quizItems.length === 0) {
+      container.innerHTML = `<p class="text-xs text-slate-400 italic">No practice quiz generated for this draft.</p>`;
+      return;
+    }
+
+    quizItems.forEach((q, qIndex) => {
+      const card = document.createElement('div');
+      card.className = "bg-navy-card border border-gold/40 rounded-xl p-4 text-xs md:text-sm";
+      card.id = `quiz-card-${qIndex}`;
+
+      const optionsHtml = q.options.map((opt, optIndex) => `
+        <button type="button" onclick="checkQuizAnswer(${qIndex}, ${optIndex}, ${q.correct_option_index})" id="btn-${qIndex}-${optIndex}" class="w-full text-left p-2.5 rounded-lg border border-slate-700 bg-navy hover:bg-navy-dark text-slate-200 transition font-medium mb-1.5 flex items-center justify-between">
+          <span><strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}</span>
+          <span class="feedback-icon text-xs"></span>
+        </button>
+      `).join('');
+
+      card.innerHTML = `
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-amber font-black uppercase text-xs">Question ${q.question_number || (qIndex + 1)} • ${q.target_category || 'Grammar'}</span>
+          <span class="text-[11px] text-slate-400">Click to practice</span>
+        </div>
+        <div class="font-extrabold text-white text-sm md:text-base mb-3 leading-snug">
+          ${q.sentence_stem}
+        </div>
+        <div class="space-y-1">
+          ${optionsHtml}
+        </div>
+        <div id="explanation-${qIndex}" class="hidden mt-3 p-2.5 rounded-lg bg-navy text-xs text-slate-300 border border-slate-700">
+          <span class="text-gold font-bold">Rule Explanation:</span> ${q.explanation}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // Check quiz option selection
+  function checkQuizAnswer(qIndex, selectedIndex, correctIndex) {
+    const card = document.getElementById(`quiz-card-${qIndex}`);
+    const buttons = card.querySelectorAll('button');
+
+    buttons.forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === correctIndex) {
+        btn.classList.remove('bg-navy', 'border-slate-700');
+        btn.classList.add('bg-emerald-900/70', 'border-emerald-500', 'text-white');
+        btn.querySelector('.feedback-icon').innerText = "✓ Correct";
+      } else if (idx === selectedIndex) {
+        btn.classList.remove('bg-navy', 'border-slate-700');
+        btn.classList.add('bg-red-900/70', 'border-red-500', 'text-white');
+        btn.querySelector('.feedback-icon').innerText = "✗ Incorrect";
+      }
+    });
+
+    const exp = document.getElementById(`explanation-${qIndex}`);
+    if (exp) exp.classList.remove('hidden');
+  }
+
+  // Reveal all practice quiz explanations
+  function revealAllAnswers() {
+    currentQuizData.forEach((q, qIndex) => {
+      checkQuizAnswer(qIndex, -1, q.correct_option_index);
+    });
+    showToast("Revealed all answer keys & pedagogical rules.");
+  }
+
+  function downloadQuizAsHtml() {
+    let quizData = currentQuizData;
+    if (!quizData || quizData.length === 0) {
+      quizData = getDefaultQuizItems();
+      currentQuizData = quizData;
+    }
+
+    const studentHeaderRaw = document.getElementById('cardStudentHeader')?.innerText || "Student: Student";
+    const studentName = studentHeaderRaw.replace(/Student:\s*/i, '').replace(/\(ID:.*\)/, '').trim() || "Student";
+    const studentId = document.getElementById('studentIdInput')?.value.trim() || "S01";
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
+
+    const standaloneHtml = generateQuizHtmlDocument(quizData, studentName, studentId, today);
+    const safeStudentName = studentName.replace(/[^a-zA-Z0-9]/g, '_');
+    const fileName = `UTAS_ELC_Practice_${safeStudentName}_${studentId}.html`;
+
+    try {
+      // 1. Primary method: Blob download
+      const blob = new Blob([standaloneHtml], { type: 'text/html;charset=utf-8' });
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = fileName;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }, 250);
+
+      showToast(`Downloaded: ${fileName}`);
+    } catch (e) {
+      console.warn("Direct blob download restricted by iframe sandbox; using clipboard copy fallback", e);
+      copyQuizHtmlToClipboard();
+    }
+  }
+
+  function copyQuizHtmlToClipboard() {
+    let quizData = currentQuizData;
+    if (!quizData || quizData.length === 0) {
+      quizData = getDefaultQuizItems();
+      currentQuizData = quizData;
+    }
+
+    const studentHeaderRaw = document.getElementById('cardStudentHeader')?.innerText || "Student: Student";
+    const studentName = studentHeaderRaw.replace(/Student:\s*/i, '').replace(/\(ID:.*\)/, '').trim() || "Student";
+    const studentId = document.getElementById('studentIdInput')?.value.trim() || "S01";
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric' });
+
+    const standaloneHtml = generateQuizHtmlDocument(quizData, studentName, studentId, today);
+
+    // Reliable iframe-safe fallback using hidden textarea + document.execCommand('copy')
+    const textarea = document.createElement('textarea');
+    textarea.value = standaloneHtml;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+    }
+    document.body.removeChild(textarea);
+
+    if (copied) {
+      showToast("✓ Copied Standalone Quiz HTML to clipboard! You can paste and save as .html");
+    } else {
+      showToast("Unable to copy directly. Check browser permissions.");
+    }
+  }
+
+  function generateQuizHtmlDocument(quizData, studentName, studentId, today) {
+    const quizJsonString = JSON.stringify(quizData).replace(/<\/script>/g, '<\\/script>');
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UTAS ELC - Targeted Reinforcement Practice (${studentId})</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a192f;
+      --navy-surface: #112240;
+      --navy-card: #1b2d50;
+      --navy-dark: #050c18;
+      --amber: #ffbf00;
+      --gold: #d4af37;
+      --white: #ffffff;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body {
+      background-color: var(--navy);
+      color: var(--white);
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .wrapper { width: 100%; max-width: 900px; }
+    .header-card {
+      background: var(--navy-surface);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .badge {
+      display: inline-block;
+      background: var(--amber);
+      color: var(--navy);
+      font-weight: 900;
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    h1 {
+      color: var(--amber);
+      font-size: 22px;
+      font-weight: 900;
+      margin: 10px 0 6px 0;
+      text-transform: uppercase;
+    }
+    .meta-bar {
+      background: var(--navy-dark);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 12px 18px;
+      border-radius: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+    .meta-item strong { color: var(--amber); }
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .score-capsule {
+      background: var(--navy-card);
+      border: 2px solid var(--amber);
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--amber);
+    }
+    .btn {
+      background: var(--amber);
+      color: var(--navy);
+      font-weight: 800;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+    .btn:hover { background: var(--gold); }
+    .btn-secondary {
+      background: var(--navy-card);
+      color: var(--amber);
+      border: 1px solid var(--gold);
+    }
+    .quiz-card {
+      background: var(--navy-surface);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+    .category-tag {
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .sentence-stem {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.45;
+      margin: 10px 0 16px 0;
+    }
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--navy-dark);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #f1f5f9;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--amber);
+      background: var(--navy-card);
+    }
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      color: #ffffff !important;
+    }
+    .option-btn.incorrect {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #ef4444 !important;
+      color: #ffffff !important;
+    }
+    .explanation-box {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: var(--navy-dark);
+      border-left: 4px solid var(--amber);
+      border-radius: 6px;
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: var(--slate-300);
+      display: none;
+    }
+    .explanation-box strong { color: var(--amber); }
+    footer {
+      text-align: center;
+      margin: 30px 0 20px 0;
+      font-size: 12px;
+      color: var(--slate-400);
+      border-top: 1px solid rgba(212, 175, 55, 0.3);
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="header-card">
+      <span class="badge">UTAS IBRA - ELC</span>
+      <h1>Targeted Writing Reinforcement Practice</h1>
+      <div style="color: var(--slate-300); font-size: 13px; font-weight: 600;">Cognitive Scaffolding & Error Self-Repair Practice Module</div>
+      <div class="meta-bar">
+        <div class="meta-item"><strong>Student:</strong> ${studentName} (${studentId})</div>
+        <div class="meta-item"><strong>Module:</strong> EAP Foundation Draft-1 Revision</div>
+        <div class="meta-item"><strong>Date:</strong> ${today}</div>
+        <div class="meta-item"><strong>Resource Person:</strong> Muhammad Shahzad</div>
+      </div>
+    </header>
+
+    <div class="controls-bar">
+      <div class="score-capsule" id="scoreIndicator">
+        Score: 0 / ${quizData.length} Completed
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-secondary" onclick="revealAll()">Show All Explanations</button>
+        <button class="btn" onclick="resetAll()">Reset Practice</button>
+      </div>
+    </div>
+
+    <main id="quizList"></main>
+
+    <footer>
+      UNIVERSITY OF TECHNOLOGY AND APPLIED SCIENCES - IBRA • ELC Foundation Studies<br>
+      Resource Person & Examiner: Muhammad Shahzad _ Utas_Ibra
+    </footer>
+  </div>
+
+  <script>
+    const questions = ${quizJsonString};
+    let answered = 0;
+    let score = 0;
+
+    function renderQuestions() {
+      const container = document.getElementById('quizList');
+      container.innerHTML = '';
+      answered = 0;
+      score = 0;
+      updateScore();
+
+      questions.forEach((q, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+        card.id = 'q-card-' + qIdx;
+
+        let optionsHtml = '';
+        q.options.forEach((opt, oIdx) => {
+          const letter = String.fromCharCode(65 + oIdx);
+          optionsHtml += \`
+            <button type="button" class="option-btn" id="opt-\${qIdx}-\${oIdx}" onclick="selectAnswer(\${qIdx}, \${oIdx})">
+              <span><strong>\${letter}.</strong> \${opt}</span>
+              <span class="tag"></span>
+            </button>
+          \`;
+        });
+
+        card.innerHTML = \`
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="category-tag">Item \${q.question_number || (qIdx + 1)} • \${q.target_category || 'Grammar'}</span>
+            <span style="font-size: 11px; color: var(--slate-400);">Self-Repair Practice</span>
+          </div>
+          <div class="sentence-stem">\${q.sentence_stem}</div>
+          <div class="options-group">\${optionsHtml}</div>
+          <div class="explanation-box" id="exp-\${qIdx}">
+            <strong>Pedagogical Rule:</strong> \${q.explanation}
+          </div>
+        \`;
+        container.appendChild(card);
+      });
+    }
+
+    function selectAnswer(qIdx, selectedIdx) {
+      const card = document.getElementById('q-card-' + qIdx);
+      const buttons = card.querySelectorAll('.option-btn');
+      const correctIdx = questions[qIdx].correct_option_index;
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIdx) {
+          btn.classList.add('correct');
+          btn.querySelector('.tag').innerText = '✓ Correct';
+        } else if (idx === selectedIdx) {
+          btn.classList.add('incorrect');
+          btn.querySelector('.tag').innerText = '✗ Incorrect';
+        }
+      });
+
+      if (selectedIdx === correctIdx) { score++; }
+      answered++;
+      updateScore();
+      document.getElementById('exp-' + qIdx).style.display = 'block';
+    }
+
+    function updateScore() {
+      document.getElementById('scoreIndicator').innerText = \`Score: \${score} / \${questions.length} (\${answered} Answered)\`;
+    }
+
+    function revealAll() {
+      questions.forEach((q, qIdx) => {
+        const card = document.getElementById('q-card-' + qIdx);
+        const buttons = card.querySelectorAll('.option-btn');
+        buttons.forEach((btn, idx) => {
+          btn.disabled = true;
+          if (idx === q.correct_option_index) {
+            btn.classList.add('correct');
+            btn.querySelector('.tag').innerText = '✓ Correct';
+          }
+        });
+        document.getElementById('exp-' + qIdx).style.display = 'block';
+      });
+      answered = questions.length;
+      updateScore();
+    }
+
+    function resetAll() { renderQuestions(); }
+    window.onload = renderQuestions;
+  <\\/script>
+</body>
+</html>`;
+  }
